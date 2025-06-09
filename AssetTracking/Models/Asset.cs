@@ -12,7 +12,7 @@ namespace AssetTracking.Models
         public string Model { get; set; }
         public DateTime PurchaseDate { get; set; }
         public Price Price { get; set; }
-        public Office office { get; set; }
+        public Office Office { get; set; }
 
         public Asset(string brand, string model, DateTime purchaseDate, Price price, Office office)
         {
@@ -20,8 +20,14 @@ namespace AssetTracking.Models
             Model = model;
             PurchaseDate = purchaseDate;
             Price = price;
-            this.office = office;
+            Office = office;
         }
+
+        public virtual string GetTypeName()
+        {
+            return "Asset";
+        }
+
 
     }
 }

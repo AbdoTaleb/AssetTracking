@@ -40,6 +40,9 @@ namespace AssetTracker
 
             // Step 5: Confirmation message
             Console.WriteLine("✅ Assets added successfully!");
+
+            tracker.PrintAssets();
+
         }
     }
 }

@@ -8,9 +8,16 @@ namespace AssetTracking.Models
 {
     public class Smartphone : Asset
     {
-        public Smartphone(Price price, DateTime purchaseDate, string brand, string model,  Office office)
-            : base(brand, model, purchaseDate, price, office)
+        public Smartphone(Price price, string brand, string model, DateTime purchaseDate, Office office)
+            : base(brand, model, purchaseDate, price, office) // هذا الترتيب يتطابق مع Asset
         {
         }
+
+
+        public override string GetTypeName()
+        {
+            return "Smartphone";
+        }
+
     }
 }
