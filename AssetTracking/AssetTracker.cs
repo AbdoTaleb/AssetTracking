@@ -28,7 +28,16 @@ namespace AssetTracking.Models
                 .ThenBy(a => a.PurchaseDate)
                 .ToList();
 
-            Console.WriteLine($"{"Office",-10}{"Type",-10}{"Brand",-10}{"Model",-10}{"Purchase date",-30}{"Price",-10}");
+            Console.WriteLine(
+                $"{"Office",-12}" +
+                $"{"Type",-12}" +
+                $"{"Brand",-12}" +
+                $"{"Model",-18}" +
+                $"{"Purchase Date",-18}" +
+                $"{"Price",-12}" +
+                $"{"Currency",-10}"
+            );
+
 
             foreach (var asset in sortedAssets)
             {
@@ -36,6 +45,9 @@ namespace AssetTracking.Models
                 var age = DateTime.Now - asset.PurchaseDate;
                 var lifeSpan = TimeSpan.FromDays(365 * 3);
                 var remaining = lifeSpan - age;
+
+                string formattedDate = asset.PurchaseDate.ToString("yyyy-MM-dd");
+
 
                 // Convert price to local currency
                 decimal localPrice = CurrencyConverter.Convert(asset.Price.Amount, asset.Price.Currency, asset.Office.Currency);
@@ -51,7 +63,15 @@ namespace AssetTracking.Models
                 {
                     Console.ResetColor();
                 }
-                Console.WriteLine($"{asset.Office.Name,-10} {asset.GetTypeName(),-10} {asset.Brand,-10} {asset.Model,-15} {asset.PurchaseDate:yyyy-MM-dd,-15} {localPrice,10} {asset.Office.Currency}");
+                Console.WriteLine(
+                    $"{asset.Office.Name,-12}" +
+                    $"{asset.GetTypeName(),-12}" +
+                    $"{asset.Brand,-12}" +
+                    $"{asset.Model,-18}" +
+                    $"{formattedDate,-18}" +
+                    $"{localPrice,-12}" +
+                    $"{asset.Office.Currency,-10}"
+                );
 
                 Console.ResetColor();
 
@@ -62,46 +82,85 @@ namespace AssetTracking.Models
 
         public void AddAssetFromUser()
         {
-            Console.Write("Enter Brand: ");
-            string brand = Console.ReadLine();
-
-            Console.Write("Enter Model: ");
-            string model = Console.ReadLine();
-
-            Console.Write("Enter Purchase Date (yyyy-MM-dd): ");
-            DateTime purchaseDate = DateTime.Parse(Console.ReadLine());
-
-            Console.Write("Enter Price Amount: ");
-            decimal amount = decimal.Parse(Console.ReadLine());
-
-            Console.Write("Enter Price Currency (e.g., USD, EUR): ");
-            string currency = Console.ReadLine().ToUpper();
-
-            Console.Write("Enter Office Name (USA, Sweden, Germany): ");
-            string officeName = Console.ReadLine();
-
-            Console.Write("Enter asset type (computer / smartphone): ");
-            string type = Console.ReadLine()?.ToLower();
-
-            Office office = new Office(officeName, currency);
-            Price price = new Price(amount, currency);
-
-            Asset asset;
-
-            if (type == "computer") { 
-                asset = new Computer(price, brand, model, purchaseDate, office);
-            }
-            else
+            string type = "";
+            while (true)
             {
-                asset = new Smartphone(price, brand, model, purchaseDate, office);
+                Console.Write("Enter asset type (computer / smartphone) or 'exit' to cancel: ");
+                type = Console.ReadLine()?.Trim().ToLower();
+
+                if (type == "exit") return;
+
+                if (type == "computer" || type == "smartphone") break;
+
+                Console.WriteLine("❌ Invalid type. Please enter 'computer' or 'smartphone'.");
             }
-                
+
+            Console.Write("Enter Brand (or 'exit' to cancel): ");
+            string brand = Console.ReadLine()?.Trim();
+            if (brand?.ToLower() == "exit") return;
+
+            Console.Write("Enter Model (or 'exit' to cancel): ");
+            string model = Console.ReadLine()?.Trim();
+            if (model?.ToLower() == "exit") return;
+
+            DateTime purchaseDate;
+            while (true)
+            {
+                Console.Write("Enter Purchase Date (yyyy-mm-dd) or 'exit' to cancel: ");
+                string dateInput = Console.ReadLine()?.Trim();
+                if (dateInput?.ToLower() == "exit") return;
+
+                if (DateTime.TryParse(dateInput, out purchaseDate)) break;
+
+                Console.WriteLine("❌ Invalid date format. Please try again.");
+            }
+
+            decimal amount;
+            while (true)
+            {
+                Console.Write("Enter Price (positive number) or 'exit' to cancel: ");
+                string priceInput = Console.ReadLine()?.Trim();
+                if (priceInput?.ToLower() == "exit") return;
+
+                if (decimal.TryParse(priceInput, out amount) && amount >= 0) break;
+
+                Console.WriteLine("❌ Invalid price. Please enter a positive number.");
+            }
+
+            string currency;
+            while (true)
+            {
+                Console.Write("Enter Currency (USD, SEK, EUR) or 'exit' to cancel: ");
+                currency = Console.ReadLine()?.Trim().ToUpper();
+                if (currency == "EXIT") return;
+
+                if (currency == "USD" || currency == "SEK" || currency == "EUR") break;
+
+                Console.WriteLine("❌ Invalid currency. Must be USD, SEK, or EUR.");
+            }
+
+            string officeName;
+            while (true)
+            {
+                Console.Write("Enter Office Name (USA / Sweden / Germany) or 'exit' to cancel: ");
+                officeName = Console.ReadLine()?.Trim();
+                if (officeName?.ToLower() == "exit") return;
+
+                if (!string.IsNullOrWhiteSpace(officeName)) break;
+
+                Console.WriteLine("❌ Invalid office name. Please try again.");
+            }
+
+            var office = new Office(officeName, currency);
+            var price = new Price(amount, currency);
+
+            Asset asset = type == "computer"
+                ? new Computer(price, brand, model, purchaseDate, office)
+                : new Smartphone(price, brand, model, purchaseDate, office);
 
             AddAsset(asset);
-
-            Console.WriteLine("✅ Asset added successfully!\n");
-
-            AddAsset(asset);
+            Console.WriteLine("✅ Asset added successfully.\n");
         }
+
     }
 }

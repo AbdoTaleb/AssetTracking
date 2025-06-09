@@ -9,7 +9,7 @@ namespace AssetTracking.Models
     public class Computer : Asset
     {
         public Computer(Price price, string brand, string model, DateTime purchaseDate, Office office)
-            : base(brand, model, purchaseDate, price, office) // هذا الترتيب يتطابق مع Asset
+            : base(brand, model, purchaseDate, price, office) 
         {
         }
 
