@@ -20,15 +20,15 @@ It allows users to input asset data, organize it by office, and view upcoming ex
 
 ## 🏗️ Project Structure
 
-/Models
-  Asset.cs
-  Computer.cs
-  Smartphone.cs
-  Office.cs
-  Price.cs
-AssetManager.cs
-CurrencyConverter.cs
-Program.cs
+/Model
+  - Asset.cs
+  - Computer.cs
+  - Smartphone.cs
+  - Office.cs
+  - Price.cs
+- AssetManager.cs
+- CurrencyConverter.cs
+- Program.cs
 
 ---
 
