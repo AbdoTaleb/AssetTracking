@@ -39,5 +39,7 @@ Program.cs
 
 - C# (.NET 8)
 - Console-based user interface
+- LINQ for sorting and filtering
+- PlantUML (for design modeling)
 
 
